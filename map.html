@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>San Miguel de Allende Audio Tour</title>
+
+  <!-- Leaflet map library (free, no API key required) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Header ────────────────────────────────────────────────── -->
+  <header id="site-header">
+    <a href="index.html" id="header-back" aria-label="Back to home">&#8592;</a>
+    <div id="header-title">
+      <span id="header-eyebrow">Audio Tour</span>
+      <h1 id="header-name">San Miguel de Allende</h1>
+    </div>
+    <button id="lang-toggle" aria-label="Switch to Spanish">ES</button>
+  </header>
+
+  <!-- ── Map ───────────────────────────────────────────────────── -->
+  <div id="map"></div>
+
+  <!-- ── Bottom sheet (slides up when a pin is tapped) ─────────── -->
+  <div id="bottom-sheet" aria-hidden="true" role="dialog" aria-label="Stop details">
+    <div id="sheet-handle"></div>
+
+    <button id="close-btn" aria-label="Close">&#x2715;</button>
+
+    <div id="sheet-scroll">
+      <img id="stop-image" src="" alt="" />
+
+      <div id="stop-info">
+        <p id="stop-number"></p>
+        <h2 id="stop-name"></h2>
+        <p id="stop-description"></p>
+      </div>
+
+      <div id="audio-wrap">
+        <audio id="audio-player" controls preload="none">
+          Your browser does not support audio playback.
+        </audio>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay to close sheet by tapping outside -->
+  <div id="overlay"></div>
+
+  <!-- Tour data -->
+  <script src="stops.js"></script>
+  <!-- Leaflet map library -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- App logic -->
+  <script src="app.js"></script>
+</body>
+</html>

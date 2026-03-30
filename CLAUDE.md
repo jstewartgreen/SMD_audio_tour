@@ -20,10 +20,12 @@ All files are loaded by the browser directly — no bundler, no server-side rend
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Page shell. Loads Leaflet CSS/JS from CDN, then `stops.js` and `app.js`. |
+| `index.html` | Landing page: hero section, stop preview cards, "How it works", footer. Links to `map.html`. |
+| `map.html` | Map page shell. Loads Leaflet CSS/JS from CDN, then `stops.js` and `app.js`. Has a back-arrow link to `index.html`. |
 | `stops.js` | Defines the global `STOPS` array. This is the **only** file a non-developer needs to edit. |
-| `app.js` | Initializes the Leaflet map, places pins from `STOPS`, handles pin clicks, bottom-sheet open/close, and language switching. All logic is in an IIFE to avoid global pollution. |
-| `style.css` | Mobile-first styles. CSS custom properties for the color palette are at the top of the file. The bottom sheet uses `transform: translateY` for the slide animation. |
+| `landing.js` | Landing page logic: renders stop preview cards from `STOPS`, handles language toggle, persists `lang` to `sessionStorage` for `map.html` to restore. |
+| `app.js` | Initializes the Leaflet map, places pins from `STOPS`, handles pin clicks, bottom-sheet open/close, and language switching. Restores `lang` from `sessionStorage` on load. All logic is in an IIFE to avoid global pollution. |
+| `style.css` | Mobile-first styles. CSS custom properties for the color palette are at the top. Map-page styles first, then landing-page styles (scoped to `body.landing`) at the bottom. The bottom sheet uses `transform: translateY` for the slide animation. |
 | `audio/` | `.mp3` audio files, named `<stop_id>_en.mp3` / `<stop_id>_es.mp3`. |
 | `images/` | `.jpg` photos, named `<stop_id>.jpg`. |
 

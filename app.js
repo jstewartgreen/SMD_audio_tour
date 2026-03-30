@@ -7,7 +7,10 @@
   'use strict';
 
   // ── State ──────────────────────────────────────────────────────
-  let lang = 'en';
+  // Restore language chosen on the landing page (if any)
+  let lang = (function () {
+    try { return sessionStorage.getItem('lang') || 'en'; } catch (e) { return 'en'; }
+  }());
   let currentStop = null;
   let activePinEl = null;
 
@@ -21,6 +24,13 @@
   const stopName   = document.getElementById('stop-name');
   const stopDesc   = document.getElementById('stop-description');
   const player     = document.getElementById('audio-player');
+
+  // Sync toggle label with restored language
+  if (lang === 'es') {
+    langToggle.textContent = 'EN';
+    langToggle.setAttribute('aria-label', 'Switch to English');
+    document.documentElement.lang = 'es';
+  }
 
   // ── Map setup ──────────────────────────────────────────────────
   // Centered on the Jardín Principal, the heart of San Miguel

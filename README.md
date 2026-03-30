@@ -1,6 +1,6 @@
 # San Miguel de Allende Audio Tour
 
-A mobile-friendly website with an interactive map of San Miguel de Allende, Mexico. Visitors tap a location pin to hear a brief audio description of that site, in English or Spanish.
+A mobile-friendly website with a landing page and an interactive map of San Miguel de Allende, Mexico. Visitors tap a location pin to hear a brief audio description of that site, in English or Spanish.
 
 ## How to view the site locally
 
@@ -29,9 +29,11 @@ Double-click `index.html` to open it in your browser.
 ## File structure
 
 ```
-index.html      Main page (don't need to edit this)
+index.html      Landing page — intro, stop previews, "Start Tour" button
+map.html        Interactive map page
 style.css       Visual design (colors, fonts, layout)
 app.js          Map and audio player logic
+landing.js      Landing page logic
 stops.js        ← Edit this to add/remove/update stops
 audio/          Audio files go here
 images/         Photos go here

@@ -4,57 +4,78 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>San Miguel de Allende Audio Tour</title>
-
-  <!-- Leaflet map library (free, no API key required) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="landing">
 
-  <!-- ── Header ────────────────────────────────────────────────── -->
-  <header id="site-header">
-    <div id="header-title">
-      <span id="header-eyebrow">Audio Tour</span>
-      <h1 id="header-name">San Miguel de Allende</h1>
+  <!-- ── Language toggle ──────────────────────────────────────── -->
+  <button id="lang-toggle-landing" aria-label="Switch to Spanish">ES</button>
+
+  <!-- ── Hero ─────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div id="hero-inner">
+      <p class="lp-eyebrow" data-en="Self-Guided Audio Tour" data-es="Audioguía Autoguiada">Self-Guided Audio Tour</p>
+      <h1 id="hero-title">San Miguel<br>de Allende</h1>
+      <p id="hero-tagline"
+         data-en="Discover the stories behind the city's most beloved landmarks — at your own pace."
+         data-es="Descubre las historias detrás de los monumentos más queridos de la ciudad — a tu propio ritmo.">
+        Discover the stories behind the city's most beloved landmarks — at your own pace.
+      </p>
+      <a href="map.html" id="start-btn" class="lp-btn-primary">
+        <span data-en="Start the Tour" data-es="Comenzar el Tour">Start the Tour</span>
+        <span class="btn-arrow">&#8594;</span>
+      </a>
     </div>
-    <button id="lang-toggle" aria-label="Switch to Spanish">ES</button>
-  </header>
+  </section>
 
-  <!-- ── Map ───────────────────────────────────────────────────── -->
-  <div id="map"></div>
+  <!-- ── Stops preview ─────────────────────────────────────────── -->
+  <section id="stops-preview">
+    <p class="lp-eyebrow lp-eyebrow--dark"
+       data-en="Featured Stops" data-es="Paradas Destacadas">Featured Stops</p>
+    <h2 id="preview-heading"
+        data-en="What you'll explore" data-es="Lo que explorarás">What you'll explore</h2>
 
-  <!-- ── Bottom sheet (slides up when a pin is tapped) ─────────── -->
-  <div id="bottom-sheet" aria-hidden="true" role="dialog" aria-label="Stop details">
-    <div id="sheet-handle"></div>
+    <div id="stop-cards"></div>
 
-    <button id="close-btn" aria-label="Close">&#x2715;</button>
+    <a href="map.html" class="lp-btn-secondary">
+      <span data-en="Open the Map" data-es="Abrir el Mapa">Open the Map</span>
+    </a>
+  </section>
 
-    <div id="sheet-scroll">
-      <img id="stop-image" src="" alt="" />
-
-      <div id="stop-info">
-        <p id="stop-number"></p>
-        <h2 id="stop-name"></h2>
-        <p id="stop-description"></p>
+  <!-- ── How it works ──────────────────────────────────────────── -->
+  <section id="how-it-works">
+    <p class="lp-eyebrow"
+       data-en="How It Works" data-es="Cómo Funciona">How It Works</p>
+    <div id="steps">
+      <div class="step">
+        <div class="step-icon">&#128205;</div>
+        <p class="step-text"
+           data-en="Tap any pin on the map" data-es="Toca cualquier pin en el mapa">Tap any pin on the map</p>
       </div>
-
-      <div id="audio-wrap">
-        <audio id="audio-player" controls preload="none">
-          Your browser does not support audio playback.
-        </audio>
+      <div class="step-divider"></div>
+      <div class="step">
+        <div class="step-icon">&#127911;</div>
+        <p class="step-text"
+           data-en="Listen to the audio description" data-es="Escucha la descripción de audio">Listen to the audio description</p>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step">
+        <div class="step-icon">&#127758;</div>
+        <p class="step-text"
+           data-en="Switch between English and Spanish" data-es="Cambia entre inglés y español">Switch between English and Spanish</p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Overlay to close sheet by tapping outside -->
-  <div id="overlay"></div>
+  <!-- ── Footer ────────────────────────────────────────────────── -->
+  <footer id="lp-footer">
+    <p data-en="San Miguel de Allende, Guanajuato, México"
+       data-es="San Miguel de Allende, Guanajuato, México">
+      San Miguel de Allende, Guanajuato, México
+    </p>
+  </footer>
 
-  <!-- Tour data -->
   <script src="stops.js"></script>
-  <!-- Leaflet map library -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- App logic -->
-  <script src="app.js"></script>
+  <script src="landing.js"></script>
 </body>
 </html>
