@@ -7,23 +7,31 @@
   'use strict';
 
   // ── State ──────────────────────────────────────────────────────
-  // Restore language chosen on the landing page (if any)
   let lang = (function () {
     try { return sessionStorage.getItem('lang') || 'en'; } catch (e) { return 'en'; }
   }());
-  let currentStop = null;
-  let activePinEl = null;
+  let currentStop  = null;
+  let activePinEl  = null;
+  let imgList      = [];   // images[] for the open stop
+  let imgIdx       = 0;   // current carousel position
 
   // ── DOM references ─────────────────────────────────────────────
-  const sheet      = document.getElementById('bottom-sheet');
-  const overlay    = document.getElementById('overlay');
-  const closeBtn   = document.getElementById('close-btn');
-  const langToggle = document.getElementById('lang-toggle');
-  const stopImage  = document.getElementById('stop-image');
-  const stopNumber = document.getElementById('stop-number');
-  const stopName   = document.getElementById('stop-name');
-  const stopDesc   = document.getElementById('stop-description');
-  const player     = document.getElementById('audio-player');
+  const sheet           = document.getElementById('bottom-sheet');
+  const overlay         = document.getElementById('overlay');
+  const closeBtn        = document.getElementById('close-btn');
+  const langToggle      = document.getElementById('lang-toggle');
+  const stopNumber      = document.getElementById('stop-number');
+  const stopName        = document.getElementById('stop-name');
+  const stopDesc        = document.getElementById('stop-description');
+  const player          = document.getElementById('audio-player');
+  const carousel        = document.getElementById('image-carousel');
+  const carouselImg     = document.getElementById('carousel-img');
+  const imgPrev         = document.getElementById('img-prev');
+  const imgNext         = document.getElementById('img-next');
+  const imgDots         = document.getElementById('img-dots');
+  const parroquiaBtn    = document.getElementById('parroquia-map-btn');
+  const parroquiaModal  = document.getElementById('parroquia-modal');
+  const modalClose      = document.getElementById('parroquia-modal-close');
 
   // Sync toggle label with restored language
   if (lang === 'es') {
@@ -32,10 +40,9 @@
     document.documentElement.lang = 'es';
   }
 
-  // ── Map setup ──────────────────────────────────────────────────
-  // Centered on the Jardín Principal, the heart of San Miguel
+  // ── Map ────────────────────────────────────────────────────────
   const map = L.map('map', {
-    center: [20.9131, -100.7450],
+    center: [20.9131, -100.7452],
     zoom: 16,
     zoomControl: true,
   });
@@ -56,18 +63,13 @@
       html: pinEl.outerHTML,
       iconSize: [36, 36],
       iconAnchor: [18, 18],
-      popupAnchor: [0, -20],
     });
 
     const marker = L.marker([stop.lat, stop.lng], { icon: icon }).addTo(map);
 
-    // Keep a reference to the pin DOM element so we can highlight it
     marker.on('add', function () {
       const el = marker.getElement();
-      if (el) {
-        const inner = el.querySelector('.pin-inner');
-        marker._pinInner = inner;
-      }
+      if (el) marker._pinInner = el.querySelector('.pin-inner');
     });
 
     marker.on('click', function () {
@@ -79,7 +81,7 @@
   function openStop(stop, number, marker) {
     currentStop = stop;
 
-    // Highlight the tapped pin, un-highlight the previous one
+    // Highlight active pin
     if (activePinEl) activePinEl.classList.remove('active');
     activePinEl = marker._pinInner || null;
     if (activePinEl) activePinEl.classList.add('active');
@@ -87,17 +89,15 @@
     // Stop number label
     stopNumber.textContent = 'Stop ' + number;
 
-    // Photo (hide if missing)
-    if (stop.image) {
-      stopImage.src = stop.image;
-      stopImage.alt = stop['name_' + lang] || stop.name_en;
-      stopImage.style.display = 'block';
-      stopImage.onerror = function () { stopImage.style.display = 'none'; };
-    } else {
-      stopImage.style.display = 'none';
-    }
+    // Image carousel
+    imgList = stop.images || [];
+    imgIdx  = 0;
+    renderCarousel();
 
-    // Text + audio for current language
+    // Parroquia map button (stops 6 & 7 only)
+    parroquiaBtn.style.display = stop.parroquia_map ? 'inline-block' : 'none';
+
+    // Text + audio
     updateLanguage(stop);
 
     // Show sheet
@@ -106,30 +106,62 @@
     overlay.classList.add('visible');
   }
 
-  // ── Update text/audio when language changes ────────────────────
+  // ── Image carousel ─────────────────────────────────────────────
+  function renderCarousel() {
+    if (imgList.length === 0) {
+      carousel.style.display = 'none';
+      return;
+    }
+
+    carousel.style.display = 'block';
+    carouselImg.src = imgList[imgIdx];
+    carouselImg.alt = currentStop ? (currentStop['name_' + lang] || '') : '';
+    carouselImg.onerror = function () {
+      // Skip broken images and try the next one
+      if (imgIdx < imgList.length - 1) {
+        imgIdx++;
+        renderCarousel();
+      } else {
+        carousel.style.display = 'none';
+      }
+    };
+
+    const multi = imgList.length > 1;
+    imgPrev.style.display = multi ? 'flex' : 'none';
+    imgNext.style.display = multi ? 'flex' : 'none';
+
+    // Rebuild dots
+    imgDots.innerHTML = '';
+    if (multi) {
+      imgList.forEach(function (_, i) {
+        const dot = document.createElement('span');
+        dot.className = 'img-dot' + (i === imgIdx ? ' active' : '');
+        dot.addEventListener('click', function () { imgIdx = i; renderCarousel(); });
+        imgDots.appendChild(dot);
+      });
+    }
+  }
+
+  imgPrev.addEventListener('click', function () {
+    if (imgIdx > 0) { imgIdx--; renderCarousel(); }
+  });
+
+  imgNext.addEventListener('click', function () {
+    if (imgIdx < imgList.length - 1) { imgIdx++; renderCarousel(); }
+  });
+
+  // ── Update text + audio for current language ───────────────────
   function updateLanguage(stop) {
     stopName.textContent = stop['name_' + lang] || stop.name_en;
     stopDesc.textContent = stop['description_' + lang] || stop.description_en;
 
-    const src = stop['audio_' + lang] || '';
-    if (player.src !== src) {          // avoid reloading the same file
+    // Fall back to English audio if no Spanish version exists
+    const src = stop['audio_' + lang] || stop.audio_en || '';
+    if (player.getAttribute('src') !== src) {
       player.pause();
-      player.src = src;
+      player.setAttribute('src', src);
       player.load();
     }
-  }
-
-  // ── Close sheet ────────────────────────────────────────────────
-  function closeSheet() {
-    player.pause();
-    sheet.classList.remove('open');
-    sheet.setAttribute('aria-hidden', 'true');
-    overlay.classList.remove('visible');
-    if (activePinEl) {
-      activePinEl.classList.remove('active');
-      activePinEl = null;
-    }
-    currentStop = null;
   }
 
   // ── Language toggle ────────────────────────────────────────────
@@ -138,19 +170,44 @@
     langToggle.textContent = lang === 'en' ? 'ES' : 'EN';
     langToggle.setAttribute('aria-label', lang === 'en' ? 'Switch to Spanish' : 'Switch to English');
     document.documentElement.lang = lang;
-
-    if (currentStop) {
-      updateLanguage(currentStop);
-    }
+    try { sessionStorage.setItem('lang', lang); } catch (e) {}
+    if (currentStop) updateLanguage(currentStop);
   });
 
-  // ── Close via button or overlay tap ────────────────────────────
+  // ── Parroquia modal ────────────────────────────────────────────
+  parroquiaBtn.addEventListener('click', function () {
+    parroquiaModal.classList.add('open');
+    parroquiaModal.setAttribute('aria-hidden', 'false');
+  });
+
+  function closeParroquiaModal() {
+    parroquiaModal.classList.remove('open');
+    parroquiaModal.setAttribute('aria-hidden', 'true');
+  }
+
+  modalClose.addEventListener('click', closeParroquiaModal);
+  parroquiaModal.addEventListener('click', function (e) {
+    if (e.target === parroquiaModal) closeParroquiaModal();
+  });
+
+  // ── Close bottom sheet ─────────────────────────────────────────
+  function closeSheet() {
+    player.pause();
+    sheet.classList.remove('open');
+    sheet.setAttribute('aria-hidden', 'true');
+    overlay.classList.remove('visible');
+    if (activePinEl) { activePinEl.classList.remove('active'); activePinEl = null; }
+    currentStop = null;
+  }
+
   closeBtn.addEventListener('click', closeSheet);
   overlay.addEventListener('click', closeSheet);
 
-  // ── Keyboard accessibility ─────────────────────────────────────
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && currentStop) closeSheet();
+    if (e.key === 'Escape') {
+      if (parroquiaModal.classList.contains('open')) closeParroquiaModal();
+      else if (currentStop) closeSheet();
+    }
   });
 
 })();

@@ -284,6 +284,172 @@ html, body {
   font-size: 10px !important;
 }
 
+/* ── Image carousel ─────────────────────────────────────────── */
+#image-carousel {
+  position: relative;
+  width: 100%;
+  background: var(--parchment);
+  display: none; /* shown by JS when images exist */
+  overflow: hidden;
+}
+
+#carousel-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(43, 26, 16, 0.55);
+  color: var(--white);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  z-index: 2;
+}
+
+.carousel-nav:hover { background: rgba(43, 26, 16, 0.85); }
+#img-prev { left: 10px; }
+#img-next { right: 10px; }
+
+#img-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.img-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.img-dot.active { background: var(--white); }
+
+/* ── Parroquia map button (inside bottom sheet) ──────────────── */
+#parroquia-map-btn {
+  display: none; /* shown by JS for stops 6 & 7 only */
+  margin-top: 14px;
+  background: transparent;
+  border: 1px solid var(--terracotta);
+  color: var(--terracotta);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+#parroquia-map-btn:hover {
+  background: var(--terracotta);
+  color: var(--white);
+}
+
+/* ── Parroquia aerial-map modal ──────────────────────────────── */
+#parroquia-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(43, 26, 16, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+#parroquia-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#parroquia-modal-inner {
+  background: var(--cream);
+  border-radius: 12px;
+  max-width: 560px;
+  width: 100%;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  position: relative;
+  padding: 24px 20px 20px;
+}
+
+#parroquia-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--parchment);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  color: var(--stone);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#parroquia-modal-close:hover { color: var(--dark); }
+
+.modal-eyebrow {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 6px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: normal;
+  color: var(--dark);
+  margin-bottom: 14px;
+}
+
+#parroquia-img-wrap {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+#parroquia-img-wrap img {
+  width: 100%;
+  display: block;
+}
+
+.modal-caption {
+  font-size: 14px;
+  color: var(--stone);
+  line-height: 1.55;
+}
+
 /* ── Map page: back arrow in header ─────────────────────────── */
 #header-back {
   color: var(--gold);

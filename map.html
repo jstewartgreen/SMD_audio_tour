@@ -4,10 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>San Miguel de Allende Audio Tour</title>
-
-  <!-- Leaflet map library (free, no API key required) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -25,37 +22,65 @@
   <!-- ── Map ───────────────────────────────────────────────────── -->
   <div id="map"></div>
 
-  <!-- ── Bottom sheet (slides up when a pin is tapped) ─────────── -->
+  <!-- ── Bottom sheet ──────────────────────────────────────────── -->
   <div id="bottom-sheet" aria-hidden="true" role="dialog" aria-label="Stop details">
     <div id="sheet-handle"></div>
-
     <button id="close-btn" aria-label="Close">&#x2715;</button>
 
     <div id="sheet-scroll">
-      <img id="stop-image" src="" alt="" />
 
+      <!-- Image carousel -->
+      <div id="image-carousel">
+        <img id="carousel-img" src="" alt="" />
+        <button class="carousel-nav" id="img-prev" aria-label="Previous image">&#8249;</button>
+        <button class="carousel-nav" id="img-next" aria-label="Next image">&#8250;</button>
+        <div id="img-dots"></div>
+      </div>
+
+      <!-- Stop text -->
       <div id="stop-info">
         <p id="stop-number"></p>
         <h2 id="stop-name"></h2>
         <p id="stop-description"></p>
+
+        <!-- Parroquia aerial-map button — shown only for stops 6 & 7 -->
+        <button id="parroquia-map-btn" aria-label="View aerial map of the Parroquia">
+          &#9992;&nbsp; View Parroquia Map
+        </button>
       </div>
 
+      <!-- Audio player -->
       <div id="audio-wrap">
         <audio id="audio-player" controls preload="none">
           Your browser does not support audio playback.
         </audio>
       </div>
+
     </div>
   </div>
 
-  <!-- Overlay to close sheet by tapping outside -->
+  <!-- Dim overlay — tap to close sheet -->
   <div id="overlay"></div>
 
-  <!-- Tour data -->
+  <!-- ── Parroquia aerial-map modal ────────────────────────────── -->
+  <div id="parroquia-modal" aria-hidden="true" role="dialog" aria-label="Parroquia aerial map">
+    <div id="parroquia-modal-inner">
+      <button id="parroquia-modal-close" aria-label="Close map">&#x2715;</button>
+      <p class="modal-eyebrow">Aerial View</p>
+      <h3 class="modal-title">Parroquia de San Miguel Arcángel</h3>
+      <div id="parroquia-img-wrap">
+        <img src="images/misc/Porroquia  arial.jpg"
+             alt="Aerial view of the Parroquia de San Miguel Arcángel" />
+      </div>
+      <p class="modal-caption">
+        <strong>Stop 6</strong> covers the exterior facade and surroundings.
+        <strong>Stop 7</strong> guides you through the interior chapels and artworks.
+      </p>
+    </div>
+  </div>
+
   <script src="stops.js"></script>
-  <!-- Leaflet map library -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- App logic -->
   <script src="app.js"></script>
 </body>
 </html>
