@@ -8,7 +8,10 @@
 
   // ── State ──────────────────────────────────────────────────────
   let lang = (function () {
-    try { return sessionStorage.getItem('lang') || 'en'; } catch (e) { return 'en'; }
+    try {
+      const stored = sessionStorage.getItem('lang');
+      return stored === 'es' ? 'es' : 'en'; // only accept known values
+    } catch (e) { return 'en'; }
   }());
   let currentStop  = null;
   let activePinEl  = null;

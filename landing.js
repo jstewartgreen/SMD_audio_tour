@@ -36,9 +36,9 @@
     applyLang();
   });
 
-  // Persist language choice so map.html picks it up
+  // Persist language choice (only known values) so map.html picks it up
   toggle.addEventListener('click', function () {
-    try { sessionStorage.setItem('lang', lang); } catch (e) {}
+    try { sessionStorage.setItem('lang', lang === 'es' ? 'es' : 'en'); } catch (e) {}
   });
 
   function applyLang() {
