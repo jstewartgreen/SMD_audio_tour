@@ -98,6 +98,20 @@ html, body {
   z-index: 1;
 }
 
+/* ── Live location dot ──────────────────────────────────────── */
+.user-location-dot {
+  background: #4A90D9;
+  border: 3px solid var(--white);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.3);
+}
+
+.user-accuracy-ring {
+  stroke: #4A90D9;
+  stroke-width: 1;
+  fill: rgba(74, 144, 217, 0.08);
+}
+
 /* ── Custom map pins ────────────────────────────────────────── */
 .stop-pin {
   background: none !important;

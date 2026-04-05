@@ -61,6 +61,31 @@
     maxZoom: 19,
   }).addTo(map);
 
+  // ── Live location ("blue dot") ────────────────────────────────
+  var locationMarker = null;
+  var accuracyCircle = null;
+
+  map.on('locationfound', function (e) {
+    var r = e.accuracy / 2;
+    if (!locationMarker) {
+      accuracyCircle = L.circle(e.latlng, {
+        radius: r,
+        className: 'user-accuracy-ring'
+      }).addTo(map);
+      locationMarker = L.circleMarker(e.latlng, {
+        radius: 8,
+        className: 'user-location-dot'
+      }).addTo(map);
+    } else {
+      locationMarker.setLatLng(e.latlng);
+      accuracyCircle.setLatLng(e.latlng).setRadius(r);
+    }
+  });
+
+  // locationerror is intentionally not handled — if GPS is denied or
+  // unavailable the map simply works without the dot.
+  map.locate({ watch: true, setView: false, maxZoom: 17 });
+
   // ── Place pins ─────────────────────────────────────────────────
   STOPS.forEach(function (stop, index) {
     const pinEl = document.createElement('div');
