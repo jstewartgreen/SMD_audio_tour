@@ -18,7 +18,11 @@
       <span id="header-eyebrow">Audio Tour</span>
       <h1 id="header-name">San Miguel de Allende</h1>
     </div>
-    <button id="lang-toggle" aria-label="Switch to Spanish">ES</button>
+    <div id="header-actions">
+      <button id="test-audio-btn" aria-label="Test audio">&#9654; Test</button>
+      <button id="legend-btn" aria-label="Show stop list">&#9776;</button>
+      <button id="lang-toggle" aria-label="Switch to Spanish">ES</button>
+    </div>
   </header>
 
   <!-- ── Map ───────────────────────────────────────────────────── -->
@@ -58,6 +62,16 @@
         </audio>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ── Legend modal ─────────────────────────────────────────── -->
+  <div id="legend-modal" aria-hidden="true" role="dialog" aria-label="Stop list">
+    <div id="legend-inner">
+      <button id="legend-close" aria-label="Close">&#x2715;</button>
+      <p class="modal-eyebrow">Tour Stops</p>
+      <h3 class="modal-title">All Locations</h3>
+      <ol id="legend-list"></ol>
     </div>
   </div>
 

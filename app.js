@@ -17,6 +17,7 @@
   let activePinEl  = null;
   let imgList      = [];   // images[] for the open stop
   let imgIdx       = 0;   // current carousel position
+  var stopMarkers  = [];  // marker references, indexed by stop order
 
   // ── DOM references ─────────────────────────────────────────────
   const sheet           = document.getElementById('bottom-sheet');
@@ -35,6 +36,11 @@
   const parroquiaBtn    = document.getElementById('parroquia-map-btn');
   const parroquiaModal  = document.getElementById('parroquia-modal');
   const modalClose      = document.getElementById('parroquia-modal-close');
+  const testAudioBtn    = document.getElementById('test-audio-btn');
+  const legendBtn       = document.getElementById('legend-btn');
+  const legendModal     = document.getElementById('legend-modal');
+  const legendClose     = document.getElementById('legend-close');
+  const legendList      = document.getElementById('legend-list');
 
   // Sync toggle label with restored language
   if (lang === 'es') {
@@ -69,6 +75,7 @@
     });
 
     const marker = L.marker([stop.lat, stop.lng], { icon: icon }).addTo(map);
+    stopMarkers[index] = marker;
 
     marker.on('add', function () {
       const el = marker.getElement();
@@ -206,9 +213,62 @@
   closeBtn.addEventListener('click', closeSheet);
   overlay.addEventListener('click', closeSheet);
 
+  // ── Test audio (browser-generated beep, no file needed) ───────
+  testAudioBtn.addEventListener('click', function () {
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = 440;        // A4 — a clear, pleasant tone
+      gain.gain.setValueAtTime(0.4, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 1.0);
+      testAudioBtn.classList.add('playing');
+      setTimeout(function () { testAudioBtn.classList.remove('playing'); }, 1100);
+    } catch (e) {
+      alert('Audio test is not supported in this browser.');
+    }
+  });
+
+  // ── Legend modal ───────────────────────────────────────────────
+  // Build the list once from STOPS data
+  STOPS.forEach(function (stop, i) {
+    var li = document.createElement('li');
+    li.innerHTML =
+      '<span class="legend-num">' + (i + 1) + '</span>' +
+      '<span class="legend-name">' + stop['name_' + lang] + '</span>';
+    li.addEventListener('click', function () {
+      closeLegend();
+      // Find the marker for this stop and simulate a click
+      var marker = stopMarkers[i];
+      if (marker) openStop(stop, i + 1, marker);
+    });
+    legendList.appendChild(li);
+  });
+
+  legendBtn.addEventListener('click', function () {
+    legendModal.classList.add('open');
+    legendModal.setAttribute('aria-hidden', 'false');
+  });
+
+  function closeLegend() {
+    legendModal.classList.remove('open');
+    legendModal.setAttribute('aria-hidden', 'true');
+  }
+
+  legendClose.addEventListener('click', closeLegend);
+  legendModal.addEventListener('click', function (e) {
+    if (e.target === legendModal) closeLegend();
+  });
+
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       if (parroquiaModal.classList.contains('open')) closeParroquiaModal();
+      else if (legendModal.classList.contains('open')) closeLegend();
       else if (currentStop) closeSheet();
     }
   });
